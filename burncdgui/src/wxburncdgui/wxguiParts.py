@@ -10,7 +10,9 @@ License:        BSD
 Requirements:   wxpython, wxIDs
 """
 import wx
+from wxPython.lib.infoframe import *
 from wxIDs import *
+from string import replace
 
 class CreateConfirm(object):
 	"""
@@ -66,3 +68,32 @@ class CreateSelector(object):
 		
 		wx.EVT_RADIOBOX(frame, EVENTID, EVENTHANDLER)
 	
+class ProgressWindow(object):
+	output=""
+	def __init__(self,parent,stream):
+		newoutput=stream.read(1)
+		buffer=""
+		self.window= wxPyInformationalMessagesFrame(progname="Progress Window",text="Output while burning:",dir="/tmp/")
+		self.window("\n\n\n If you close this window the subprocess might be killed!!!\n\n\n")
+		while newoutput != "":
+			if newoutput =="\r" or newoutput =="\n":
+				self.output+=buffer+"\n"
+				self.add_toview(buffer)
+				print buffer
+				buffer=""
+			else:
+				buffer+=newoutput
+			newoutput=stream.read(1)
+		self.output+=buffer+"\n"
+		self.add_toview(buffer)
+		print buffer
+		
+		self.window("\n\n\n The process has terminated, you can close this window. \n\n\n")
+	
+	def add_toview(self,strng):
+		self.window(strng+"\n")
+	
+	def gett_all_progress_information(self):
+		return self.output
+
+

@@ -11,6 +11,8 @@ Requirements:   burncd in /usr/sbin/burncd (as it is used to be for FreeBSD)
 
 from types import StringType
 from os import system
+from os import popen4
+
 from os.path import isfile
 
 __all__=["databurner","audioburner","dvdrwburner","vcdburner","NoSuchFileException","CharNotAllowedInFilename"]
@@ -24,7 +26,12 @@ class burner(object):
 	fixate=1
 	speed="max"
 	command="/usr/sbin/burncd"
+	Burn="system"
+	test=0
 	def __init__(self,data):
+		"""
+		Raises NoSuchFileException if Files in data don't exist
+		"""
 		if not(isfiles(data)):
 			raise NoSuchFileException
 		self.data=data
@@ -37,23 +44,25 @@ class burner(object):
 		self.fixate=int
 	def change_speed(self, speed):
 		self.speed=speed
-	def burn(self):
+	def change_test(self,int):
+		self.test=int
+	
+	def makeCommandline(self):
 		if isinstance(self.data, StringType):
-			commandline=self.command +" -f" + self.device 
-			commandline+= " -s " +self.speed
-			commandline+= " " + self.mode + " " + self.data
+			self.commandline=self.command 
+			if self.test:
+				self.commandline+=" -t "
+			self.commandline+=" -f " + self.device 
+			self.commandline+= " -s " +self.speed
+			self.commandline+= " " + self.mode + " " + self.data
 			if self.fixate:
-				commandline+= " " + "fixate"
-			value=system(commandline)
-			if value:
-				return "Error while burning"
-			else:
-				return "Burning done"
+				self.commandline+= " " + " fixate "
 		else:
-			return """
-			Can't create Commandline:
-			self.data must be a string. But it is not a string.
-			"""
+			self.commandline="/bin/echo 'No commandline' "
+			
+	def burn(self):
+		self.makeCommandline()
+		return popen4(self.commandline)
 
 class databurner(burner):
 	"""
@@ -92,5 +101,15 @@ class CharNotAllowedInFilename(Exception):
 	pass
 
 if __name__=="__main__":
-	burner("/tmp/foo /tmp/bar")
-	print "Done"
+	try:
+		burner("/etc/fstab")
+	except NoSuchFileException:
+		print "Has your *nix no /etc/fstab?"
+	else:
+		print "You have a /etc/fstab"
+	try:
+		burner("/")
+	except NoSuchFileException:
+		print "All right, / is not a file"
+	else:
+		print "Why is / a file?"

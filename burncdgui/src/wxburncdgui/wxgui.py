@@ -7,13 +7,14 @@ Copyright:	2005 by Thomas Flaig t.gf@freenet.de
 Created:	24.Feb.2005
 Last modified:	06.Mar.2005
 License:        BSD
-Requirements:   burncd, wxpython, wxIDs, wxguiParts
+Requirements:   burncd, wxpython, wxIDs, wxguiParts, wxburnwidow
 """
 import wx
 import os
 from burncd.burncd import *
 from wxIDs import *
 from wxguiParts import *
+
 
 __all__=["burngui"]
 
@@ -26,8 +27,10 @@ class MainFrame(wx.Frame):
 	speedmode=0
 	file=""
 	device="/dev/acd1"
+	teststatus=0
 	typelist=["data", "audio", "dvdrw", "vcd"]
 	fix=["fixate","don't fixate"]
+	test=["burn","only test burning"]
 	
 	def __init__(self, parent, ID, title):
 		wx.Frame.__init__(self, parent, ID, title,
@@ -50,10 +53,15 @@ class MainFrame(wx.Frame):
 		CreateSelector(self.sizer, self,ID_SELECT_FIX,self.SetFix,
 		text="Fixate CD after burning?", choices=self.fix)
 		
+		"Testselector"
+		CreateSelector(self.sizer, self, ID_SELECT_TEST,self.SetTest,
+		text="Just testing?",choices=self.test)
+		
 		#SelectSpeed(self.sizer) to be done
 		
 		"DeviceSelector"
 		TextSelector(self.sizer,self,ID_DEVICECH,self.SetDevice,self.device,text="Please enter CD-Device to use")
+		
 		
 		CreateConfirm(self.sizer, self, text="&Burn")
 		
@@ -125,7 +133,10 @@ class MainFrame(wx.Frame):
 	def SetISO(self,event):
 		self.file=event.GetString()
 		self.SetStatusText(self.file)
-		
+	
+	def SetTest(self,event):
+		self.teststatus=event.GetInt()
+	
 	def SetType(self,event):
 		self.mode=event.GetInt()
 		
@@ -139,28 +150,35 @@ class MainFrame(wx.Frame):
 		self.device=event.GetString()
 
 	def OnConfirm(self,event):
+		if self.preptoburn() :
+			self.burn()
+		
+	def preptoburn(self):
 		diag = wx.MessageDialog(self,
 			"Settings: "
 			+"\n Image: " + self.file
 			+"\n CD-Type "+self.typelist[self.mode]
 			+"\n Fix: "+self.fix[self.fixStatus]
+			+"\n Test:"+self.test[self.teststatus]
 			+"\n Device: "+self.device
 			#+"\n speedmode "+self.speedmodes[self.speedmode]
 			,"Confirm",
 			 wx.OK| wx.CANCEL| wx.ICON_INFORMATION)
 		if diag.ShowModal()==wx.ID_OK:
+			diag.Destroy()
 			type=self.typelist[self.mode]
 			path=self.file
 			fix=self.fix[self.fixStatus]
+			test=self.test[self.teststatus]
 			try:
 				if type == "data":
-					burn=databurner(path)
+					self.burnobj=databurner(path)
 				elif type=="audio":
-					burn=audioburner(path)
+					self.burnobj=audioburner(path)
 				elif type=="dvdrw":
-					burn=dvdrwburner(path)
+					self.burnobj=dvdrwburner(path)
 				elif type=="vcd":
-					burn=vcdburner(path)
+					self.burnobj=vcdburner(path)
 				else:
 					print "Type unknown"
 					print type
@@ -172,29 +190,32 @@ class MainFrame(wx.Frame):
 				,"Error",wx.OK | wx.ICON_INFORMATION)
 				diag2.ShowModal()
 				diag2.Destroy()
-				return 1
+				diag.Destroy()
+				return False
 			if fix=="fixate":
-				burn.change_fixate(1)
+				self.burnobj.change_fixate(1)
 			elif fix=="don't fixate":
-				burn.change_fixate(0)
+				self.burnobj.change_fixate(0)
 			else:
 				print "Unkown command for fixate:"
 				print fix
-			burn.change_cddevice(self.device)
-			result=burn.burn()
-			diag2 = wx.MessageDialog(self,
-			"""I have now tried to burn the cdrom.
-			For details, please see the messages in your X-term.
-			The return status of the burn command was:
-			"""
-			+result
-			,
-			"Result",
-			 wx.OK | wx.ICON_INFORMATION)
-			diag2.ShowModal()
-			diag2.Destroy()
+				diag.Destroy()
+				return False
+			if test !="burn":
+				self.burnobj.change_test(1)
+			self.burnobj.change_cddevice(self.device)
+			diag.Destroy()
+			return True
 		diag.Destroy()
-
+		return False
+		
+	def burn(self):
+		result=self.burnobj.burn()
+		
+		ProgressWindow(self,result[1])
+		result[0].close()
+		result[1].close()
+		
 
 class burngui(wx.App):
 	def OnInit(self):
