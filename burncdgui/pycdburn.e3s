@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--eric3 session file for project pycdburn-->
+<!--This file was generated automatically, do not edit.-->
+<!--Saved: 2005-02-22, 14:44:12-->
+<Session>
+  <Filenames>
+    <Filename>/usr/home/thomas/devel/pycdburn/pycdburn.py</Filename>
+    <Filename>/usr/home/thomas/devel/pycdburn/burncd.py</Filename>
+    <Filename>/usr/home/thomas/devel/pycdburn/burnanygui.py</Filename>
+    <Filename>/usr/home/thomas/devel/pycdburn/tkgui.py</Filename>
+  </Filenames>
+  <ActiveWindow>/usr/home/thomas/devel/pycdburn/pycdburn.py</ActiveWindow>
+  <Breakpoints>
+  </Breakpoints>
+  <DebugInfo>
+    <CommandLine></CommandLine>
+    <WorkingDirectory></WorkingDirectory>
+    <ReportExceptions value="1" />
+    <Exceptions>
+    </Exceptions>
+  </DebugInfo>
+  <Bookmarks>
+  </Bookmarks>
+</Session>

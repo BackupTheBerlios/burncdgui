@@ -1,0 +1,8 @@
+TO DO
+======
++ Do not alwways burn with max. speed, Create Speed selector
++ Use a config file to store CD-Device,.....
++ Some Reimplementation of wxgui.py
+o Add a cool progress bar while burning
+- Maybe: add support for mkisofs
+- Maybe: add support for cdrecord/cdrao
