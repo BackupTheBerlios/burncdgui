@@ -18,6 +18,9 @@ from wxguiParts import *
 __all__=["burngui"]
 
 class MainFrame(wx.Frame):
+	"""
+	The main frame of the application ;)
+	"""
 	mode=0
 	fixStatus=0
 	speedmode=0
@@ -60,6 +63,9 @@ class MainFrame(wx.Frame):
 		self.Show(1)
 	
 	def CreateMenuBar(self):
+		"""
+		Seperate this ?!
+		"""
 		filemenu = wx.Menu()
 		filemenu.Append(ID_OPEN,"&Load ISO","Load ISO-Image to burn")
 		filemenu.AppendSeparator()

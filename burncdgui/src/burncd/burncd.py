@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 """
 Description:	Klassen zum Umgang mit burncd
-Version:	0.1
 Copyright:	2005 by Thomas Flaig t.gf@freenet.de
 Created:	21.Feb.2005
 Last modified:	21.Feb.2005
@@ -17,6 +16,9 @@ from os import system
 __all__=["databurner","audioburner","dvdrwburner","vcdburner"]
 
 class burner(object):
+	"""
+	Masterclass for all CD-Burning stuff
+	"""
 	device="/dev/acd1"
 	mode="data"
 	fixate=1
@@ -52,13 +54,25 @@ class burner(object):
 			"""
 
 class databurner(burner):
+	"""
+	Class for burning data CDs
+	"""
 	mode="data"
 
 class audioburner(burner):
+	"""
+	Class for burning audio CDs
+	"""
 	mode="audio"
 
 class dvdrwburner(burner):
+	"""
+	Class for burning DVD+
+	"""
 	mode="dvdrw"
 
 class vcdburner(burner):
+	"""
+	Class for burning VCDs
+	"""
 	mode="vcd"

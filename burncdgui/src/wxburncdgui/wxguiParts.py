@@ -13,7 +13,17 @@ import wx
 from wxIDs import *
 
 class CreateConfirm(object):
+	"""
+	Class to create a confirm box in your wx.frame
+	"""
 	def __init__(self,sizer, frame,text="&ok"):
+	"""
+	Events:
+		ID_BURNBUTTON =	For the Confirm-Button
+		connected to frame.OnConfirm
+		ID_EXITBUTTON =For the Exit Button
+		connected to frame.OnExit
+	"""
 		self.ConfirmBox=wx.BoxSizer(wx.HORIZONTAL)
 		
 		self.BurnButton=wx.Button(frame, ID_BURNBUTTON, text)
@@ -28,6 +38,10 @@ class CreateConfirm(object):
 		wx.EVT_BUTTON(frame, ID_EXITBUTTON,frame.OnExit)
 
 class TextSelector(object):
+	"""
+	Class to create a Textinputbox with a Textdescription
+	in  your wx.frame
+	"""
 	def __init__(self, sizer, frame, EVENTID,EVENTHANDLER, var,
 		text="Enter your choice"):
 		self.Box=wx.BoxSizer(wx.HORIZONTAL)
@@ -40,6 +54,10 @@ class TextSelector(object):
 		wx.EVT_TEXT(frame, EVENTID,EVENTHANDLER)
 
 class CreateSelector(object):
+	"""
+	Class to create a Radiobox with a Textdescription
+	in  your wx.frame
+	"""
 	def __init__(self, sizer, frame, EVENTID,EVENTHANDLER, 
 		text="Make your choice", choices=["yes","no"]):
 		self.select=wx.RadioBox(frame, EVENTID, text, wx.Point(-1,-1),

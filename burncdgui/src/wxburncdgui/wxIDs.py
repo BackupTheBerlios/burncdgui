@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-Description:	
-Version:	0.1
+Description:	Event IDs 
 Copyright:	2005 by Thomas Flaig t.gf@freenet.de
 Created:	06.Mar.2005
 Last modified:	06.Mar.2005
