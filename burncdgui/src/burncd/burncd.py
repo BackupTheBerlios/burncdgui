@@ -9,11 +9,11 @@ License:        BSD
 Requirements:   burncd in /usr/sbin/burncd (as it is used to be for FreeBSD)
 """
 
-
 from types import StringType
 from os import system
+from os.path import isfile
 
-__all__=["databurner","audioburner","dvdrwburner","vcdburner"]
+__all__=["databurner","audioburner","dvdrwburner","vcdburner","NoSuchFileException","CharNotAllowedInFilename"]
 
 class burner(object):
 	"""
@@ -25,6 +25,8 @@ class burner(object):
 	speed="max"
 	command="/usr/sbin/burncd"
 	def __init__(self,data):
+		if not(isfiles(data)):
+			raise NoSuchFileException
 		self.data=data
 		
 	def change_cddevice(self, name):
@@ -76,3 +78,19 @@ class vcdburner(burner):
 	Class for burning VCDs
 	"""
 	mode="vcd"
+
+def isfiles(strng):
+	for i in strng.split():
+		if not(isfile(i)):
+			return False
+	return True
+
+class NoSuchFileException(Exception): 
+	pass
+
+class CharNotAllowedInFilename(Exception):
+	pass
+
+if __name__=="__main__":
+	burner("/tmp/foo /tmp/bar")
+	print "Done"
