@@ -152,18 +152,27 @@ class MainFrame(wx.Frame):
 			type=self.typelist[self.mode]
 			path=self.file
 			fix=self.fix[self.fixStatus]
-			
-			if type == "data":
-				burn=databurner(path)
-			elif type=="audio":
-				burn=audioburner(path)
-			elif type=="dvdrw":
-				burn=dvdrwburner(path)
-			elif type=="vcd":
-				burn=vcdburner(path)
-			else:
-				print "Type unknown"
-				print type
+			try:
+				if type == "data":
+					burn=databurner(path)
+				elif type=="audio":
+					burn=audioburner(path)
+				elif type=="dvdrw":
+					burn=dvdrwburner(path)
+				elif type=="vcd":
+					burn=vcdburner(path)
+				else:
+					print "Type unknown"
+					print type
+			except NoSuchFileException:
+				diag2 = wx.MessageDialog(self,
+				"""
+				A file you like to burn does not exist
+				"""
+				,"Error",wx.OK | wx.ICON_INFORMATION)
+				diag2.ShowModal()
+				diag2.Destroy()
+				return 1
 			if fix=="fixate":
 				burn.change_fixate(1)
 			elif fix=="don't fixate":
