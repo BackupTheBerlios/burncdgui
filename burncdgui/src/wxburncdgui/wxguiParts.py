@@ -17,13 +17,13 @@ class CreateConfirm(object):
 	Class to create a confirm box in your wx.frame
 	"""
 	def __init__(self,sizer, frame,text="&ok"):
-	"""
-	Events:
+		"""
+		Events:
 		ID_BURNBUTTON =	For the Confirm-Button
 		connected to frame.OnConfirm
 		ID_EXITBUTTON =For the Exit Button
 		connected to frame.OnExit
-	"""
+		"""
 		self.ConfirmBox=wx.BoxSizer(wx.HORIZONTAL)
 		
 		self.BurnButton=wx.Button(frame, ID_BURNBUTTON, text)
