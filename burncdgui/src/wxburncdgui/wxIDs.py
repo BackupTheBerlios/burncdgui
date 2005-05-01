@@ -21,4 +21,5 @@ ID_SELECT_SPEED=wx.NewId()
 ID_SELECT_TEST=wx.NewId()
 ID_DEVICECH=wx.NewId()
 ID_HELP=wx.NewId()
+ID_ADD=wx.NewId()
 

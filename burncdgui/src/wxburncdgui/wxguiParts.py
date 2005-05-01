@@ -13,6 +13,7 @@ import wx
 from wxPython.lib.infoframe import *
 from wxIDs import *
 from string import replace
+from os import popen4
 
 class CreateConfirm(object):
 	"""
@@ -69,6 +70,10 @@ class CreateSelector(object):
 		wx.EVT_RADIOBOX(frame, EVENTID, EVENTHANDLER)
 	
 class ProgressWindow(object):
+	"""
+	Class, which prints a stream 
+	to a new wxPyInformationalMessagesFrame
+	"""
 	output=""
 	def __init__(self,parent,stream):
 		newoutput=stream.read(1)
@@ -93,7 +98,47 @@ class ProgressWindow(object):
 	def add_toview(self,strng):
 		self.window(strng+"\n")
 	
-	def gett_all_progress_information(self):
+	def get_all_progress_information(self):
 		return self.output
 
 
+class ProgressWindow2(object):
+	"""
+	Class, which runs a command and prints stdout and stderr 
+	to a new wxPyInformationalMessagesFrame
+	"""
+	output=""
+	def __init__(self,parent,command):
+		self.window= wxPyInformationalMessagesFrame("Progress")
+		self.window.write("\n\n\n If you close this window the subprocess might be killed!!!\n\n\n")
+		#self.window.flush()
+		self.window.flush()
+		self.command=command
+	
+	def run(self):
+		buffer=""
+		stream=popen4(self.command)
+		outputstream=stream[1]
+		newoutput=outputstream.read(1)
+		
+		while newoutput != "":
+			if newoutput =="\r" or newoutput =="\n":
+				self.output+=buffer+"\n"
+				self.add_toview(buffer)
+				print buffer # Just for debugging.....
+				buffer=""
+			else:
+				buffer+=newoutput
+			newoutput=outputstream.read(1)
+		self.output+=buffer+"\n"
+		self.add_toview(buffer)
+		print buffer
+		
+		self.window.write("\n\n\n The process has terminated, you can close this window. \n\n\n")
+	
+	def add_toview(self,strng):
+		self.window.write(strng+"\n")
+		self.window.flush()
+	
+	def get_all_progress_information(self):
+		return self.output

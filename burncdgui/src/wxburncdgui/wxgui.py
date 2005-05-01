@@ -26,7 +26,7 @@ class MainFrame(wx.Frame):
 	fixStatus=0
 	speedmode=0
 	file=""
-	device="/dev/acd1"
+	device="/dev/acd0"
 	teststatus=0
 	typelist=["data", "audio", "dvdrw", "vcd"]
 	fix=["fixate","don't fixate"]
@@ -75,7 +75,8 @@ class MainFrame(wx.Frame):
 		Seperate this ?!
 		"""
 		filemenu = wx.Menu()
-		filemenu.Append(ID_OPEN,"&Load ISO","Load ISO-Image to burn")
+		filemenu.Append(ID_OPEN,"&Load file","Load file to burn")
+		filemenu.Append(ID_ADD,"&Add file","Add file to selection")
 		filemenu.AppendSeparator()
 		filemenu.Append(ID_EXIT, "E&xit", "Terminate the program")
 		
@@ -94,6 +95,7 @@ class MainFrame(wx.Frame):
 		wx.EVT_MENU(self, ID_ABOUT, self.OnAbout)
 		wx.EVT_MENU(self, ID_EXIT,  self.OnExit)
 		wx.EVT_MENU(self, ID_OPEN, self.OnLoad)
+		wx.EVT_MENU(self,ID_ADD, self.OnAdd)
 		wx.EVT_MENU(self, ID_HELP, self.OnHelp)
 	
 	def OnAbout(self, event):
@@ -129,6 +131,16 @@ class MainFrame(wx.Frame):
 		
 		diag.Destroy()
 		
+	def OnAdd(self,event):
+		diag = wx.FileDialog(self, "Choose a file", "", "", "", wx.OPEN)
+		if diag.ShowModal() == wx.ID_OK:
+			filename=diag.GetFilename()
+			dirname=diag.GetDirectory()
+			self.file+=" "+os.path.join(dirname,filename)
+			self.SetStatusText(self.file)
+			self.IsoSelector.vartext.SetValue(self.file)
+		
+		diag.Destroy()
 	
 	def SetISO(self,event):
 		self.file=event.GetString()
@@ -210,12 +222,16 @@ class MainFrame(wx.Frame):
 		return False
 		
 	def burn(self):
+		"""
 		result=self.burnobj.burn()
 		
 		ProgressWindow(self,result[1])
 		result[0].close()
 		result[1].close()
-		
+		"""
+		command=self.burnobj.getCommandline()
+		progwin=ProgressWindow2(self,command)
+		progwin.run()
 
 class burngui(wx.App):
 	def OnInit(self):

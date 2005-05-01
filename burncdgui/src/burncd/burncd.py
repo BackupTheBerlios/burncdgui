@@ -21,7 +21,7 @@ class burner(object):
 	"""
 	Masterclass for all CD-Burning stuff
 	"""
-	device="/dev/acd1"
+	device="/dev/acd0"
 	mode="data"
 	fixate=1
 	speed="max"
@@ -63,6 +63,10 @@ class burner(object):
 	def burn(self):
 		self.makeCommandline()
 		return popen4(self.commandline)
+		
+	def getCommandline(self):
+		self.makeCommandline()
+		return self.commandline
 
 class databurner(burner):
 	"""
